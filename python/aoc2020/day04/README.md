@@ -59,30 +59,32 @@ def load_data(data_file):
     data_file = Path(data_file_path)
 
     with data_file.open("r") as file_handler:
-        data_bucket = []
-        for row in file_handler:
-            data_row = row.strip()
-            if data_row == "":
-                yield dict(data.split(":") for data in data_bucket)
-                data_bucket.clear()
-            else:
-                data_bucket.extend([data for data in data_row.split()])
+        for row in file_handler.read().split("\n\n"):
+            fields = row.split("\n")
+            yield dict(
+                key_value.split(":")
+                for field in fields
+                for key_value in field.split()
+            )
 ~~~
 
 and with this, we can evaluate the correctness of the fields by doing:
 
 ~~~python
-def password_guard(input_data):
-    valid_keys = set(["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"])
-    input_data_keys = set(input_data.keys())
+def problem1(input_data):
+    input_data1, input_data2 = tee(input_data, 2)
 
-    intersection_keys = valid_keys & input_data_keys
+    # When all the keys are part of the dictionary, we can assume they are all valid
+    only_full_fields = filter(lambda x: len(x) == 8, input_data1)
 
-    return valid_keys == intersection_keys
+    partial_fields = filter(
+        # Filter the sublist by retaining only the elements with no "cid" key in it
+        lambda x: "cid" not in x,
+        # Sublist containing only 7 keys
+        filter(lambda x: len(x) == 7, input_data2)
+    )
 
-filtered_data = filter(password_guard, input_data)
-
-print(len(list(filtered_data)))
+    return len(list(only_full_fields)) + len(list(partial_fields))
 ~~~
 
 ## Prompt 2
