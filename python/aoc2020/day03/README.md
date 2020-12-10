@@ -94,3 +94,48 @@ _In the above example, these slopes would find 2, 7, 3, 4, and 2 tree(s) respect
 _What do you get if you multiply together the number of trees encountered on each of the listed slopes?_
 
 ### Solution
+
+This required a little bit of efforth to be solved.
+
+The core of the problem is the logic to find the correct way to iterate thru the steps.
+
+A guard function that returns `True` when the corresponding logic is verified is as follows:
+
+~~~python
+def guard_trees(input_tuple, col_step=1, row_step=1):
+    idx, row = input_tuple
+
+    return all([
+        idx % row_step == 0,
+        row[(idx * col_step) % len(row)] == "#"
+    ])
+~~~
+
+Here the `col_step` and `row_step` needs to be updated to match all the different iterations required by the problem, and in order to fully embrace the functional side of the problem, i've thought of building a list of partial functions where the col and row steps are baked to match the input data, with a resulting function that looks like:
+
+~~~python
+def problem2(input_data):
+
+    def guard_trees(input_tuple, col_step=1, row_step=1):
+        idx, row = input_tuple
+
+        return all([
+            idx % row_step == 0,
+            row[(idx * col_step) % len(row)] == "#"
+        ])
+
+    slope_functions = [
+        partial(guard_trees, col_step=1, row_step=1),
+        partial(guard_trees, col_step=3, row_step=1),
+        partial(guard_trees, col_step=5, row_step=1),
+        partial(guard_trees, col_step=7, row_step=1),
+        partial(guard_trees, col_step=1, row_step=2)
+    ]
+
+    filtered_result = [
+        filter(slope_fn, enumerate(input_data))
+        for slope_fn, input_data in zip(slope_functions, tee(input_data, 5))
+    ]
+
+    return math.prod(list(map(len, map(list, filtered_result))))
+~~~
