@@ -51,9 +51,10 @@ _Each policy actually describes two positions in the password, where 1 means the
 
 _Given the same example list from above:_
 
-`1-3 a: abcde` _is valid: **position 1 contains a** and **position 3 does not.**_
-`1-3 b: cdefg` _is invalid: neither position 1 nor position 3 contains b._
-`2-9 c: ccccccccc` _is invalid: both position 2 and position 9 contain c._
+- `1-3 a: abcde` _is valid: **position 1 contains a** and **position 3 does not.**_
+- `1-3 b: cdefg` _is invalid: neither position 1 nor position 3 contains b._
+- `2-9 c: ccccccccc` _is invalid: both position 2 and position 9 contain c._
+
 _How many passwords are valid according to the new interpretation of the policies?_
 
 ### Solution
