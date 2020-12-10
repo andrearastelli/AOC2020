@@ -22,15 +22,10 @@ def load_data(data_file):
 if __name__ == "__main__":
     input_data = load_data("./day04.1.dat")
 
-    def password_guard(input_data):
-        valid_keys = set(["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"])
-        input_data_keys = set(input_data.keys())
+    def passports_guard(input_data):
+        return len(input_data) == 8 or (len(input_data) == 7 and "cid" not in input_data)
 
-        intersection_keys = valid_keys & input_data_keys
-
-        return valid_keys == intersection_keys
-
-    filtered_data = filter(password_guard, input_data)
+    filtered_data = filter(passports_guard, input_data)
 
     print(len(list(filtered_data)))
 
