@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+echo $1
+
+mkdir python/aoc2020/$1
+pushd python/aoc2020/$1
+    touch $1.py README.md $1.1.dat
+popd
