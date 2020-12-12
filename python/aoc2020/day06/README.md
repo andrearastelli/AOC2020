@@ -109,3 +109,34 @@ _In this example, the sum of these counts is 3 + 0 + 1 + 1 + 1 = 6._
 _For each group, count the number of questions to which everyone answered "yes". What is the sum of those counts?_
 
 ### Solution 2
+
+Ok, this will require an update in the parser for the input data:
+
+~~~python
+def improved_load_data(data_file):
+    data_file_path = os.path.join(os.path.dirname(__file__), data_file)
+    data_file = Path(data_file_path)
+
+    with data_file.open("r") as file_handler:
+        for row in file_handler.read().split("\n\n"):
+            fields = row.split("\n")
+            yield [
+                set(field)
+                for field in fields
+                for key_value in field.split()
+            ]
+~~~
+
+It now returns a list of sets, one set per person containing unique values for the answers.
+
+This changes the solution to the first prompt in this way:
+~~~python
+def improved_problem1(input_data):
+    return sum(map(len, [set.union(*data) for data in input_data]))
+~~~
+
+And this makes the solution for the second prompt pretty much straightforward, changing the union of the values to an intersection.
+~~~python
+def problem2(input_data):
+    return sum(map(len, [set.intersection(*data) for data in input_data]))
+~~~
